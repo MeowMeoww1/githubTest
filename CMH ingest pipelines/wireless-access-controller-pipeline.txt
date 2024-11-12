@@ -1,0 +1,76 @@
+[
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "<%{leading_character}>%{log_time} %{+log_time} %{+log_time} %{+log_time} %{source_hostname} %{code}/%{log_severity_level}/%{description}:%{message}",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "%{message} (%{*p1}=[%{&p1}], %{*p2}=%{&p2}, %{*p3}=%{&p3})",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "%{message} (%{temp})",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "kv": {
+      "field": "temp",
+      "field_split": ", ",
+      "value_split": "[:=]",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "%{message}(%{temp2})",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "kv": {
+      "field": "temp2",
+      "field_split": ", ",
+      "value_split": "[:=]",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "%{message}[%{WLAN_STA_INFO}]%{temp3}",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "kv": {
+      "field": "temp3",
+      "field_split": ";\\s?",
+      "value_split": "[:=]",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "script": {
+      "source": "if (ctx.temp != null) { ctx.remove('temp');} if (ctx.temp2 != null) { ctx.remove('temp2');} if (ctx.temp3 != null) { ctx.remove('temp3');}",
+      "lang": "painless",
+      "ignore_failure": true
+    }
+  }
+]

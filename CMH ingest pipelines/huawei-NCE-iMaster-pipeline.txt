@@ -1,0 +1,10 @@
+[
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "<%{leading_character}>%{log_time} %{+log_time} %{+log_time} %{+log_time} %{+log_time} %{-}: %{code} # %{level} # %{message} # %{description} # %{result} #",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  }
+]

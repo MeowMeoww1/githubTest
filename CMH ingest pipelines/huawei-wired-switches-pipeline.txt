@@ -1,0 +1,33 @@
+[
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "<%{leading_character}>%{log_time} %{+log_time} %{+log_time} %{+log_time} %{source_hostname} %{code}/%{log_severity_level}/%{description}:%{message}",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "dissect": {
+      "field": "message",
+      "pattern": "%{message} (%{temp2})",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "kv": {
+      "field": "temp2",
+      "field_split": ", ",
+      "value_split": "=",
+      "ignore_missing": true,
+      "ignore_failure": true
+    }
+  },
+  {
+    "script": {
+      "source": "if (ctx.temp2 != null) { ctx.remove('temp2')}",
+      "ignore_failure": true
+    }
+  }
+]
